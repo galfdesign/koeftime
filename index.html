@@ -3,240 +3,332 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Расход жидкости по мощности</title>
+    <title>Калькулятор остывания помещения</title>
     <style>
-        :root {
-            --main-color: #2c7be5;
-            --border-color: #e3ebf6;
-            --text-color: #12263f;
-            --bg-color: #f9fbfd;
-            --input-bg: #ffffff;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .container {
-            max-width: 500px;
+            font-family: Arial, sans-serif;
+            max-width: 800px;
             margin: 0 auto;
             padding: 15px;
+            line-height: 1.5;
         }
-        
+        h1, h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
         .calculator {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        
-        .calculator-header {
-            background-color: var(--main-color);
-            color: white;
-            padding: 15px 20px;
-            font-size: 18px;
-            font-weight: 600;
-        }
-        
-        .calculator-body {
-            padding: 20px;
-        }
-        
-        .input-group {
-            margin-bottom: 20px;
-        }
-        
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-        
-        .input-group input, 
-        .input-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 15px;
-            background-color: var(--input-bg);
-            transition: border-color 0.2s;
-        }
-        
-        .input-group input:focus, 
-        .input-group select:focus {
-            outline: none;
-            border-color: var(--main-color);
-            box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.1);
-        }
-        
-        .results {
-            background-color: var(--bg-color);
+            background-color: #f9f9f9;
             border-radius: 8px;
             padding: 15px;
-            margin-top: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        
-        .result-item {
+        .form-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #e8f4fc;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .chart-container {
+            margin-top: 20px;
+            height: 250px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.8rem;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .mode-selector {
+            margin-bottom: 15px;
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .mode-selector label {
+            display: flex;
             align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
+            margin-right: 0;
+            cursor: pointer;
+            font-size: 0.9rem;
         }
-        
-        .result-item:last-child {
-            border-bottom: none;
-        }
-        
-        .result-label {
-            font-size: 14px;
-            color: #6e84a3;
-        }
-        
-        .result-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--main-color);
-        }
-        
-        @media (max-width: 480px) {
-            .container {
-                padding: 10px;
+        @media (min-width: 600px) {
+            body {
+                padding: 20px;
             }
-            
-            .calculator-header {
-                padding: 12px 15px;
-                font-size: 16px;
+            h1, h2 {
+                font-size: 1.8rem;
             }
-            
-            .calculator-body {
-                padding: 15px;
+            .calculator {
+                padding: 20px;
             }
-            
-            .input-group input, 
-            .input-group select {
-                padding: 10px 12px;
-                font-size: 14px;
+            table {
+                font-size: 0.9rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="calculator">
-            <div class="calculator-header">
-                Расход жидкости по мощности
+    <h1>Калькулятор остывания помещения</h1>
+    
+    <div class="calculator">
+        <h2>Исходные данные</h2>
+        
+        <div class="mode-selector">
+            <label>
+                <input type="radio" name="mode" value="time" checked> Рассчитать время
+            </label>
+            <label>
+                <input type="radio" name="mode" value="temp"> Рассчитать температуру
+            </label>
+        </div>
+        
+        <div class="form-group">
+            <label for="buildingType">Материал стен:</label>
+            <select id="buildingType">
+                <option value="140">Газобетон (β=140)</option>
+                <option value="62">Кирпич (β=62)</option>
+                <option value="123">Дерево (β=123)</option>
+                <option value="25">Каркас (β=25)</option>
+                <option value="20">Другое (указать коэффициент)</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="beta">Коэффициент аккумуляции (β, час):</label>
+            <input type="number" id="beta" value="140" min="1" step="1">
+        </div>
+        
+        <div class="form-group">
+            <label for="tout">Температура наружного воздуха (°C):</label>
+            <input type="number" id="tout" value="-10" step="0.1">
+        </div>
+        
+        <div class="form-group">
+            <label for="t1">Начальная температура (°C):</label>
+            <input type="number" id="t1" value="20" step="0.1">
+        </div>
+        
+        <div class="form-group" id="t2-group">
+            <label for="t2">Конечная температура (°C):</label>
+            <input type="number" id="t2" value="8" step="0.1">
+        </div>
+        
+        <div class="form-group" id="time-group" style="display: none;">
+            <label for="time">Время остывания (час):</label>
+            <input type="number" id="time" value="10" step="0.1">
+        </div>
+        
+        <div id="result" class="result">
+            <h2>Результаты</h2>
+            <p id="resultTimeText">Время остывания: <span id="resultTime"></span> час</p>
+            <p id="resultTempText" style="display: none;">Конечная температура: <span id="resultTemp"></span> °C</p>
+            <p>Средняя скорость остывания: <span id="resultSpeed"></span> °C/час</p>
+            
+            <div class="chart-container">
+                <canvas id="coolingChart"></canvas>
             </div>
-            <div class="calculator-body">
-                <div class="input-group">
-                    <label for="fluidType">Тип жидкости</label>
-                    <select id="fluidType">
-                        <option value="water">Вода</option>
-                        <option value="glycol">Гликоль (30%)</option>
-                    </select>
-                </div>
-                
-                <div class="input-group">
-                    <label for="power">Тепловая мощность Q, кВт</label>
-                    <input type="number" id="power" placeholder="Введите значение">
-                </div>
-                
-                <div class="input-group">
-                    <label for="deltaTemp">Температурный перепад ∆t, °C</label>
-                    <input type="number" id="deltaTemp" placeholder="Введите значение">
-                </div>
-                
-                <div class="results">
-                    <div class="result-item">
-                        <span class="result-label">м³/час</span>
-                        <span id="result-m3" class="result-value">-</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">л/мин</span>
-                        <span id="result-lmin" class="result-value">-</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">л/сек</span>
-                        <span id="result-lsec" class="result-value">-</span>
-                    </div>
-                </div>
+            
+            <h3>Таблица остывания</h3>
+            <div style="overflow-x: auto;">
+                <table id="coolingTable">
+                    <thead>
+                        <tr>
+                            <th>Время (час)</th>
+                            <th>Температура (°C)</th>
+                            <th>Скорость (°C/час)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Получаем элементы DOM
-        const fluidTypeSelect = document.getElementById('fluidType');
-        const powerInput = document.getElementById('power');
-        const deltaTempInput = document.getElementById('deltaTemp');
-        const resultM3 = document.getElementById('result-m3');
-        const resultLMin = document.getElementById('result-lmin');
-        const resultLSec = document.getElementById('result-lsec');
+        let coolingChart = null;
         
-        // Коэффициенты для разных жидкостей (кВт·ч/(м³·°C))
-        const fluidCoefficients = {
-            water: 1.163,
-            glycol: 0.96 // Примерное значение для 30% гликоля
-        };
-        
-        // Функция для форматирования числа с двумя знаками после запятой
-        function formatNumber(num) {
-            return num.toLocaleString('ru-RU', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-        }
-        
-        // Функция для расчета расхода жидкости
-        function calculateFlow() {
-            // Получаем текущие значения
-            const fluidType = fluidTypeSelect.value;
-            const power = parseFloat(powerInput.value);
-            const deltaTemp = parseFloat(deltaTempInput.value);
+        // Инициализация калькулятора
+        document.addEventListener('DOMContentLoaded', function() {
+            // Назначаем обработчики событий
+            document.getElementById('buildingType').addEventListener('change', updateCalculation);
+            document.getElementById('beta').addEventListener('input', updateCalculation);
+            document.getElementById('tout').addEventListener('input', updateCalculation);
+            document.getElementById('t1').addEventListener('input', updateCalculation);
+            document.getElementById('t2').addEventListener('input', updateCalculation);
+            document.getElementById('time').addEventListener('input', updateCalculation);
             
-            // Проверяем, что значения введены корректно
-            if (isNaN(power) || isNaN(deltaTemp) || deltaTemp === 0) {
-                resultM3.textContent = '-';
-                resultLMin.textContent = '-';
-                resultLSec.textContent = '-';
-                return;
+            document.querySelectorAll('input[name="mode"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'time') {
+                        document.getElementById('t2-group').style.display = 'block';
+                        document.getElementById('time-group').style.display = 'none';
+                        document.getElementById('resultTimeText').style.display = 'block';
+                        document.getElementById('resultTempText').style.display = 'none';
+                    } else {
+                        document.getElementById('t2-group').style.display = 'none';
+                        document.getElementById('time-group').style.display = 'block';
+                        document.getElementById('resultTimeText').style.display = 'none';
+                        document.getElementById('resultTempText').style.display = 'block';
+                    }
+                    updateCalculation();
+                });
+            });
+            
+            // Первоначальный расчет
+            updateCalculation();
+        });
+        
+        // Обновляем коэффициент при выборе типа материала
+        document.getElementById('buildingType').addEventListener('change', function() {
+            document.getElementById('beta').value = this.value;
+            updateCalculation();
+        });
+        
+        function updateCalculation() {
+            // Получаем входные данные
+            const beta = parseFloat(document.getElementById('beta').value);
+            const tout = parseFloat(document.getElementById('tout').value);
+            const t1 = parseFloat(document.getElementById('t1').value);
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            
+            let time, t2;
+            
+            if (mode === 'time') {
+                // Режим расчета времени - используем заданную конечную температуру
+                t2 = parseFloat(document.getElementById('t2').value);
+                // Формула для расчета времени: z = β * ln((t1 - tн) / (t2 - tн))
+                time = beta * Math.log((t1 - tout) / (t2 - tout));
+                document.getElementById('resultTime').textContent = time.toFixed(2);
+                document.getElementById('resultTempText').style.display = 'none';
+                document.getElementById('resultTimeText').style.display = 'block';
+                document.getElementById('time').value = time.toFixed(2);
+            } else {
+                // Режим расчета температуры - используем заданное время
+                time = parseFloat(document.getElementById('time').value);
+                // Формула для расчета температуры: t2 = tн + (t1 - tн) * exp(-z/β)
+                t2 = tout + (t1 - tout) * Math.exp(-time / beta);
+                document.getElementById('resultTemp').textContent = t2.toFixed(2);
+                document.getElementById('resultTimeText').style.display = 'none';
+                document.getElementById('resultTempText').style.display = 'block';
+                document.getElementById('t2').value = t2.toFixed(2);
             }
             
-            // Получаем коэффициент для выбранной жидкости
-            const coefficient = fluidCoefficients[fluidType];
+            // Рассчитываем среднюю скорость остывания
+            const speed = (t1 - t2) / time;
             
-            // Рассчитываем расход жидкости в м³/час
-            const flowRateM3 = power / (deltaTemp * coefficient);
+            // Отображаем результаты
+            document.getElementById('resultSpeed').textContent = speed.toFixed(4);
             
-            // Конвертируем в другие единицы
-            const flowRateLMin = flowRateM3 * 1000 / 60; // м³/ч → л/мин
-            const flowRateLSec = flowRateLMin / 60;     // л/мин → л/сек
-            
-            // Форматируем результаты
-            resultM3.textContent = formatNumber(flowRateM3);
-            resultLMin.textContent = formatNumber(flowRateLMin);
-            resultLSec.textContent = formatNumber(flowRateLSec);
+            // Генерируем данные для графика и таблицы
+            generateCoolingData(beta, tout, t1, time, t2);
         }
         
-        // Добавляем обработчики событий для динамического расчета
-        fluidTypeSelect.addEventListener('change', calculateFlow);
-        powerInput.addEventListener('input', calculateFlow);
-        deltaTempInput.addEventListener('input', calculateFlow);
+        function generateCoolingData(beta, tout, t1, totalTime, targetT2) {
+            const timeSteps = [];
+            const tempSteps = [];
+            const speedSteps = [];
+            
+            const tableBody = document.querySelector('#coolingTable tbody');
+            tableBody.innerHTML = '';
+            
+            // Рассчитываем данные для каждого часа
+            const steps = Math.min(30, Math.ceil(totalTime) + 2);
+            for (let i = 0; i < steps; i++) {
+                const z = i * (totalTime / (steps - 1));
+                const t = tout + (t1 - tout) * Math.exp(-z / beta);
+                let speed = 0;
+                
+                if (i > 0) {
+                    const prevT = tempSteps[i-1];
+                    const prevZ = timeSteps[i-1];
+                    speed = (prevT - t) / (z - prevZ);
+                }
+                
+                timeSteps.push(z);
+                tempSteps.push(t);
+                speedSteps.push(speed);
+                
+                // Добавляем строку в таблицу
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${z.toFixed(2)}</td>
+                    <td>${t.toFixed(2)}</td>
+                    <td>${i > 0 ? speed.toFixed(4) : '-'}</td>
+                `;
+                tableBody.appendChild(row);
+            }
+            
+            // Создаем или обновляем график
+            drawChart(timeSteps, tempSteps, targetT2);
+        }
+        
+        function drawChart(timeData, tempData, targetT2) {
+            const ctx = document.getElementById('coolingChart').getContext('2d');
+            
+            if (coolingChart) {
+                coolingChart.destroy();
+            }
+            
+            coolingChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeData.map(t => t.toFixed(1)),
+                    datasets: [{
+                        label: 'Температура (°C)',
+                        data: tempData,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Время (час)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Температура (°C)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
